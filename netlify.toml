@@ -1,6 +1,6 @@
 [build]
-  external_node_modules = ["express"]
-  node_bundler = "esbuild"
+  functions = "src"
+  publish = "dist"
 
 [[redirects]]
   to="/.netlify/functions/api/:splat"

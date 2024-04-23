@@ -1,6 +1,6 @@
 const NewRecipe = require("../models/my-recipes");
 
-const APIFeatures = require("../utils/apiFeatures");
+const APIFeatures = require("../../utils/apiFeatures");
 
 exports.getRecipes = async (req, res) => {
   try {

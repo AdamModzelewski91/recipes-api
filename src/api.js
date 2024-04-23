@@ -25,7 +25,7 @@ mongoose
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use("/photos", express.static(path.join("photos")));
+// app.use("/photos", express.static(path.join("photos")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/my-recipes", myRecipes);
-app.use("/global-recipes", globalRecipes);
+app.use("/api/my-recipes", myRecipes);
+app.use("/api/global-recipes", globalRecipes);
 
-module.exports = app;
+module.exports.handler = serverless(app);
