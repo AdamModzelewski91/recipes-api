@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/my-recipes", myRecipes);
-app.use("/global-recipes", globalRecipes);
+app.use("/api/my-recipes", myRecipes);
+app.use("/api/global-recipes", globalRecipes);
 
 module.exports = serverless(app);
