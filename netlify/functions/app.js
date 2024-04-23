@@ -5,8 +5,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const serverless = require("serverless-http");
 
-const myRecipes = require("./routes/my-recipes");
-const globalRecipes = require("./routes/global-recipes");
+const myRecipes = require("../../routes/my-recipes");
+const globalRecipes = require("../../routes/global-recipes");
 
 const app = express();
 
