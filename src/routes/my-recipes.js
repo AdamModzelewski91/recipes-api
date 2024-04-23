@@ -6,8 +6,6 @@ const Multer = require("../middlewares/mime-type");
 
 const router = express.Router();
 
-router.route("/top-5");
-
 router
   .get("", MyRecipes.getRecipes)
   .post("", Multer.MimeType, MyRecipes.postRecipe);
