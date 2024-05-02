@@ -121,14 +121,29 @@ exports.putRecipe = async (req, res, next) => {
         carbohydrate: nutritions.carbohydrate,
         protein: nutritions.protein,
       },
-      published: req.body.published,
     };
 
-    let query = await NewRecipe.updateOne({ _id: req.params.id }, obj);
+    const query = await NewRecipe.findOneAndUpdate({ _id: req.params.id }, obj);
 
-    if (query.acknowledged) {
-      res.status(201).send({ ...obj, id: req.params.id });
+    const queryPhotos = await Photos.findOne({ _id: photosAlbumId });
+
+    const newPhotos = [];
+    for (let photo of queryPhotos.photos) {
+      newPhotos.push({
+        mimetype: photo.mimetype,
+        buffer: Buffer.from(photo.buffer).toString("base64"),
+        originalname: photo.originalname,
+        id: photo._id,
+      });
     }
+
+    res.status(201).send({
+      ...obj,
+      id: req.params.id,
+      photos: newPhotos,
+      photosAlbumId: query.photosAlbumId,
+      published: query.published,
+    });
   } catch (err) {
     res.status(404).json({
       status: "fail",
