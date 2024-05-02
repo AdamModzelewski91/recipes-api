@@ -6,8 +6,3 @@
   to="/.netlify/functions/api/:splat"
   from="/api/*"
   status=200
-
-[[redirects]]
-  from = "/photos/*"
-  to = "/photos/:splat"
-   status = 200  

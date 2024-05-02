@@ -1,6 +1,7 @@
 const NewRecipe = require("../models/my-recipes");
+const Photos = require("../models/photos");
 
-const APIFeatures = require("../../utils/apiFeatures");
+const APIFeatures = require("../utils/apiFeatures");
 
 exports.getRecipes = async (req, res) => {
   try {
@@ -68,16 +69,44 @@ exports.deleteRecipe = async (req, res, next) => {
 exports.putRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
-    const { publishedPhotos } = req.body;
+    const { removedPhotos, photosId } = req.body;
 
-    const newPhotos = publishedPhotos.split(",");
+    if (removedPhotos) {
+      const arrPhotos = removedPhotos.split(",");
+      const objPhoto = arrPhotos.map((x) => ({
+        _id: x,
+      }));
 
-    const url = req.protocol + "://" + req.get("host");
+      const deletePhotos = {
+        $pull: {
+          photos: { _id: { $in: objPhoto } },
+        },
+      };
 
-    req.files.forEach((file) => {
-      const path = url + "/" + file.path;
-      newPhotos.push(path);
-    });
+      await Photos.updateOne({ _id: photosId }, deletePhotos);
+    }
+
+    if (req.files.length > 0) {
+      const files = [];
+
+      for (let file of req.files) {
+        files.push({
+          buffer: file.buffer,
+          mimetype: file.mimetype,
+          size: file.size,
+          originalname: file.originalname,
+          encoding: file.encoding,
+        });
+      }
+
+      const deletePhotos = {
+        $push: {
+          photos: { $each: files },
+        },
+      };
+
+      await Photos.updateOne({ _id: photosId }, deletePhotos);
+    }
 
     const obj = {
       name: req.body.name,
@@ -92,7 +121,6 @@ exports.putRecipe = async (req, res, next) => {
         carbohydrate: nutritions.carbohydrate,
         protein: nutritions.protein,
       },
-      photos: newPhotos,
       published: req.body.published,
     };
 
@@ -112,13 +140,23 @@ exports.putRecipe = async (req, res, next) => {
 exports.postRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
-    const url = req.protocol + "://" + req.get("host");
-    const urls = [];
-    req.files.forEach((file) => {
-      const path = url + "/" + file.path;
-      urls.push(path);
-    });
-    console.log(urls);
+
+    const files = [];
+
+    for (let file of req.files) {
+      files.push({
+        buffer: file.buffer,
+        mimetype: file.mimetype,
+        size: file.size,
+        originalname: file.originalname,
+        encoding: file.encoding,
+      });
+    }
+
+    const photos = await Photos.create({ photos: files });
+
+    await photos.save();
+
     let query = await NewRecipe.create({
       name: req.body.name,
       dish: req.body.dish,
@@ -132,13 +170,13 @@ exports.postRecipe = async (req, res, next) => {
         carbohydrate: nutritions.carbohydrate,
         protein: nutritions.protein,
       },
-      photos: urls,
+      photos: photos._id,
     });
 
     res.status(201).json({
       message: "Recipe added successfully!",
       id: query._id,
-      photos: urls,
+      photos: photos._id,
       published: query.published,
     });
   } catch (err) {

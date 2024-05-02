@@ -23,7 +23,10 @@ const postNewRecipe = mongoose.Schema(
       likes: { type: Array },
       dislikes: { type: Array },
     },
-    photos: [String],
+    photos: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Photos",
+    },
     published: { type: Boolean, default: false },
   },
   { timestamps: true }

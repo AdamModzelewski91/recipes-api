@@ -2,11 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const path = require("path");
 const serverless = require("serverless-http");
 
 const myRecipes = require("./routes/my-recipes");
 const globalRecipes = require("./routes/global-recipes");
+const photos = require("./routes/photos");
 
 const app = express();
 
@@ -26,8 +26,6 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/photos", express.static(`${__dirname}/photos`));
-console.log(__dirname);
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -43,5 +41,6 @@ app.use((req, res, next) => {
 
 app.use("/api/my-recipes", myRecipes);
 app.use("/api/global-recipes", globalRecipes);
+app.use("/api/photos", photos);
 
 module.exports.handler = serverless(app);

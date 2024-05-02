@@ -49,7 +49,7 @@ router.patch("/:id", async (req, res, next) => {
     }
 
     query.save();
-    res.status(201).json(query);
+    res.status(201).json({ votes: query.votes });
   } catch (err) {
     res.status(404).json(err.message);
   }
