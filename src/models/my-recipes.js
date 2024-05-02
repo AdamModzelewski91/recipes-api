@@ -23,7 +23,7 @@ const postNewRecipe = mongoose.Schema(
       likes: { type: Array },
       dislikes: { type: Array },
     },
-    photos: {
+    photosAlbumId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Photos",
     },

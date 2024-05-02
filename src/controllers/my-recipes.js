@@ -69,7 +69,7 @@ exports.deleteRecipe = async (req, res, next) => {
 exports.putRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
-    const { removedPhotos, photosId } = req.body;
+    const { removedPhotos, photosAlbumId } = req.body;
 
     if (removedPhotos) {
       const arrPhotos = removedPhotos.split(",");
@@ -83,7 +83,7 @@ exports.putRecipe = async (req, res, next) => {
         },
       };
 
-      await Photos.updateOne({ _id: photosId }, deletePhotos);
+      await Photos.updateOne({ _id: photosAlbumId }, deletePhotos);
     }
 
     if (req.files.length > 0) {
@@ -105,7 +105,7 @@ exports.putRecipe = async (req, res, next) => {
         },
       };
 
-      await Photos.updateOne({ _id: photosId }, deletePhotos);
+      await Photos.updateOne({ _id: photosAlbumId }, deletePhotos);
     }
 
     const obj = {
@@ -170,13 +170,13 @@ exports.postRecipe = async (req, res, next) => {
         carbohydrate: nutritions.carbohydrate,
         protein: nutritions.protein,
       },
-      photos: photos._id,
+      photosAlbumId: photos._id,
     });
 
     res.status(201).json({
       message: "Recipe added successfully!",
       id: query._id,
-      photos: photos._id,
+      photosAlbumId: photos._id,
       published: query.published,
     });
   } catch (err) {
