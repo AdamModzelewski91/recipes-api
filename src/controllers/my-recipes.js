@@ -2,6 +2,7 @@ const NewRecipe = require("../models/my-recipes");
 const Photos = require("../models/photos");
 
 const APIFeatures = require("../utils/apiFeatures");
+const PerpPhotoFiles = require("../utils/perpPhotoFiles");
 
 exports.getRecipes = async (req, res) => {
   try {
@@ -87,17 +88,7 @@ exports.putRecipe = async (req, res, next) => {
     }
 
     if (req.files.length > 0) {
-      const files = [];
-
-      for (let file of req.files) {
-        files.push({
-          buffer: file.buffer,
-          mimetype: file.mimetype,
-          size: file.size,
-          originalname: file.originalname,
-          encoding: file.encoding,
-        });
-      }
+      const files = new PerpPhotoFiles(req.files).toArray();
 
       const deletePhotos = {
         $push: {
@@ -127,15 +118,7 @@ exports.putRecipe = async (req, res, next) => {
 
     const queryPhotos = await Photos.findOne({ _id: photosAlbumId });
 
-    const newPhotos = [];
-    for (let photo of queryPhotos.photos) {
-      newPhotos.push({
-        mimetype: photo.mimetype,
-        buffer: Buffer.from(photo.buffer).toString("base64"),
-        originalname: photo.originalname,
-        id: photo._id,
-      });
-    }
+    const newPhotos = new PerpPhotoFiles(queryPhotos.photos).encodeFiles();
 
     res.status(201).send({
       ...obj,
@@ -156,17 +139,7 @@ exports.postRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
 
-    const files = [];
-
-    for (let file of req.files) {
-      files.push({
-        buffer: file.buffer,
-        mimetype: file.mimetype,
-        size: file.size,
-        originalname: file.originalname,
-        encoding: file.encoding,
-      });
-    }
+    const files = new PerpPhotoFiles(req.files).toArray();
 
     const photos = await Photos.create({ photos: files });
 
