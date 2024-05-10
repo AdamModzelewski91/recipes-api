@@ -7,6 +7,7 @@ const serverless = require("serverless-http");
 const myRecipes = require("./routes/my-recipes");
 const globalRecipes = require("./routes/global-recipes");
 const photos = require("./routes/photos");
+const auth = require("./routes/auth");
 
 const app = express();
 
@@ -42,5 +43,6 @@ app.use((req, res, next) => {
 app.use("/api/my-recipes", myRecipes);
 app.use("/api/global-recipes", globalRecipes);
 app.use("/api/photos", photos);
+app.use("/api", auth);
 
 module.exports.handler = serverless(app);

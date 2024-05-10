@@ -2,7 +2,7 @@ const NewRecipe = require("../models/my-recipes");
 const Photos = require("../models/photos");
 
 const APIFeatures = require("../utils/apiFeatures");
-const PerpPhotoFiles = require("../utils/perpPhotoFiles");
+const PrepPhotoFiles = require("../utils/prepPhotoFiles");
 
 exports.getRecipes = async (req, res) => {
   try {
@@ -43,7 +43,7 @@ exports.patchRecipe = async (req, res, next) => {
       }
     );
     if (query.acknowledged) {
-      res.status(201).send(req.body);
+      res.status(200).send(req.body);
     }
   } catch (err) {
     res.status(404).json({
@@ -56,9 +56,8 @@ exports.patchRecipe = async (req, res, next) => {
 exports.deleteRecipe = async (req, res, next) => {
   try {
     let query = await NewRecipe.deleteOne({ _id: req.params.id });
-    if (query.acknowledged) {
-      res.status(204).send();
-    }
+
+    res.status(200).json({ message: "Recipe deleted successfully!" });
   } catch (err) {
     res.status(404).json({
       status: "fail",
@@ -88,15 +87,15 @@ exports.putRecipe = async (req, res, next) => {
     }
 
     if (req.files.length > 0) {
-      const files = new PerpPhotoFiles(req.files).toArray();
+      const files = new PrepPhotoFiles(req.files).toArray();
 
-      const deletePhotos = {
+      const addPhotos = {
         $push: {
           photos: { $each: files },
         },
       };
 
-      await Photos.updateOne({ _id: photosAlbumId }, deletePhotos);
+      await Photos.updateOne({ _id: photosAlbumId }, addPhotos);
     }
 
     const obj = {
@@ -118,9 +117,9 @@ exports.putRecipe = async (req, res, next) => {
 
     const queryPhotos = await Photos.findOne({ _id: photosAlbumId });
 
-    const newPhotos = new PerpPhotoFiles(queryPhotos.photos).encodeFiles();
+    const newPhotos = new PrepPhotoFiles(queryPhotos.photos).encodeFiles();
 
-    res.status(201).send({
+    res.status(200).send({
       ...obj,
       id: req.params.id,
       photos: newPhotos,
@@ -139,7 +138,7 @@ exports.postRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
 
-    const files = new PerpPhotoFiles(req.files).toArray();
+    const files = new PrepPhotoFiles(req.files).toArray();
 
     const photos = await Photos.create({ photos: files });
 
@@ -152,12 +151,11 @@ exports.postRecipe = async (req, res, next) => {
       prepTime: req.body.prepTime,
       cookTime: req.body.cookTime,
       serves: req.body.serves,
-      nutritions: {
-        calories: nutritions.calories,
-        fat: nutritions.fat,
-        carbohydrate: nutritions.carbohydrate,
-        protein: nutritions.protein,
+      createdBy: {
+        author: req.body.author,
+        authorId: req.body.authorId,
       },
+      nutritions: nutritions,
       photosAlbumId: photos._id,
     });
 

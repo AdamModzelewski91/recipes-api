@@ -12,7 +12,14 @@ class APIFeatures {
   }
 
   filter() {
-    this.query = this.query.find(this.queryObj);
+    if (this.queryObj.authorId)
+      this.query = this.query.find({
+        "createdBy.authorId": this.queryObj.authorId,
+      });
+
+    if (this.queryObj.id) {
+      this.query = this.query.findOne({ _id: this.queryObj.id });
+    }
 
     return this;
   }

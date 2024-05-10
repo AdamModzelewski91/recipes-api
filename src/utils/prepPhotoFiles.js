@@ -1,4 +1,4 @@
-class PerpPhotoFiles {
+class PrepPhotoFiles {
   constructor(files) {
     this.files = files;
   }
@@ -31,4 +31,4 @@ class PerpPhotoFiles {
   }
 }
 
-module.exports = PerpPhotoFiles;
+module.exports = PrepPhotoFiles;

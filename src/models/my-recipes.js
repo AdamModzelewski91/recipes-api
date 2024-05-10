@@ -2,22 +2,24 @@ const mongoose = require("mongoose");
 
 const postNewRecipe = mongoose.Schema(
   {
-    name: { type: String, require: true, unique: true, trim: true },
-    auth: {
-      author: { type: String, require: true },
-      date: { type: String, require: true },
+    name: { type: String, required: true, unique: true, trim: true },
+    createdBy: {
+      author: { type: String, required: true },
       authorId: { type: String, require: true },
     },
-    dish: { type: String, require: [true, "You need to specify type of dish"] },
-    difficult: { type: String, require: true },
-    prepTime: { type: Number, require: true },
-    cookTime: { type: Number, require: true },
-    serves: { type: Number, require: true },
+    dish: {
+      type: String,
+      required: [true, "You need to specify type of dish"],
+    },
+    difficult: { type: String, required: true },
+    prepTime: { type: Number, required: true },
+    cookTime: { type: Number, required: true },
+    serves: { type: Number, required: true },
     nutritions: {
-      calories: { type: Number, require: true },
-      fat: { type: Number, require: true },
-      carbohydrate: { type: Number, require: true },
-      protein: { type: Number, require: true },
+      calories: { type: Number, required: true },
+      fat: { type: Number, required: true },
+      carbohydrate: { type: Number, required: true },
+      protein: { type: Number, required: true },
     },
     votes: {
       likes: { type: Array },
@@ -32,6 +34,6 @@ const postNewRecipe = mongoose.Schema(
   { timestamps: true }
 );
 
-const NewRecipe = mongoose.model("NewRecipe", postNewRecipe);
+const NewRecipe = mongoose.model("MyRecipes", postNewRecipe);
 
 module.exports = NewRecipe;

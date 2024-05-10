@@ -1,6 +1,6 @@
 const Photos = require("../models/photos");
 
-const PerpPhotoFiles = require("../utils/perpPhotoFiles");
+const PerpPhotoFiles = require("../utils/prepPhotoFiles");
 
 exports.getPhotos = async (req, res, next) => {
   try {
