@@ -5,7 +5,11 @@ const postNewRecipe = mongoose.Schema(
     name: { type: String, required: true, unique: true, trim: true },
     createdBy: {
       author: { type: String, required: true },
-      authorId: { type: String, require: true },
+      authorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Auth",
+        require: true,
+      },
     },
     dish: {
       type: String,

@@ -23,7 +23,7 @@ exports.loginUser = (req, res, next) => {
         });
       }
       const token = jwt.sign(
-        { email: userAuth.email, userId: userAuth._id },
+        { email: userAuth.email, nick: userAuth.nick, userId: userAuth._id },
         process.env.SECRET_KEY,
         { expiresIn: "1d" }
       );
@@ -31,6 +31,7 @@ exports.loginUser = (req, res, next) => {
         token,
         userId: userAuth._id,
         nick: userAuth.nick,
+        expiresIn: new Date().getTime() + 1000 * 60 * 60 * 24,
       });
     })
     .catch((err) => {

@@ -164,8 +164,8 @@ exports.postRecipe = async (req, res, next) => {
       cookTime: req.body.cookTime,
       serves: req.body.serves,
       createdBy: {
-        author: req.body.author,
-        authorId: req.body.authorId,
+        author: req.userData.nick,
+        authorId: req.userData.userId,
       },
       nutritions: nutritions,
       photosAlbumId: photos._id,
