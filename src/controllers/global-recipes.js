@@ -1,10 +1,29 @@
 const MyRecipes = require("../models/my-recipes");
 
+const APIFeatures = require("../utils/apiFeatures");
+
 exports.getRecipes = async (req, res, next) => {
   try {
-    const recipe = await MyRecipes.find({ published: true });
+    const { page, limit, sort, fields, ...queryObj } = req.query;
 
-    res.status(200).send(recipe);
+    const features = new APIFeatures(
+      MyRecipes,
+      page,
+      limit,
+      sort,
+      fields,
+      queryObj
+    )
+      .globalList()
+      .pagination()
+      .limitFields();
+
+    const query = await features.query;
+    const count = await MyRecipes.countDocuments({
+      published: true,
+    });
+
+    res.status(200).json({ recipes: query, count: count });
   } catch (err) {
     res.status(404).json({
       status: "fail",

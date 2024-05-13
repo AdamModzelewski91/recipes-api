@@ -12,6 +12,7 @@ router
   .post("", checkAuth, Multer.MimeType, MyRecipes.postRecipe);
 
 router
+  .get("/:id", checkAuth, MyRecipes.getRecipe)
   .patch("/:id", checkAuth, MyRecipes.patchRecipe)
   .put("/:id", checkAuth, Multer.MimeType, MyRecipes.putRecipe)
   .delete("/:id", checkAuth, MyRecipes.deleteRecipe);

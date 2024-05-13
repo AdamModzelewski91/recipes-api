@@ -11,22 +11,23 @@ class APIFeatures {
     this.queryObj = queryObj;
   }
 
-  filter() {
-    if (this.queryObj.authorId)
-      this.query = this.query.find({
-        "createdBy.authorId": this.queryObj.authorId,
-      });
+  globalList() {
+    this.query = this.query.find({ published: true });
 
-    if (this.queryObj.id) {
-      this.query = this.query.findOne({ _id: this.queryObj.id });
-    }
+    return this;
+  }
+
+  myRecipes() {
+    this.query = this.query.find({
+      "createdBy.authorId": this.queryObj.authorId,
+    });
 
     return this;
   }
 
   pagination() {
-    const skip = (this.page - 1) * this.page || this.#defaultPage;
-    const pageLimit = this.limit || this.#defaultLimit;
+    const skip = this.page ?? this.#defaultPage;
+    const pageLimit = this.limit ?? this.#defaultLimit;
 
     this.query = this.query.skip(skip).limit(pageLimit);
     return this;

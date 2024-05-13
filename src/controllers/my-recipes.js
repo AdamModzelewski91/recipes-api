@@ -1,4 +1,4 @@
-const NewRecipe = require("../models/my-recipes");
+const MyRecipe = require("../models/my-recipes");
 const Photos = require("../models/photos");
 
 const APIFeatures = require("../utils/apiFeatures");
@@ -7,19 +7,36 @@ const PrepPhotoFiles = require("../utils/prepPhotoFiles");
 exports.getRecipes = async (req, res) => {
   try {
     const { page, limit, sort, fields, ...queryObj } = req.query;
+
     const features = new APIFeatures(
-      NewRecipe,
+      MyRecipe,
       page,
       limit,
       sort,
       fields,
       queryObj
     )
-      .filter()
+      .myRecipes()
       .pagination()
       .limitFields();
 
     const recipes = await features.query;
+    const count = await MyRecipe.countDocuments({
+      "createdBy.authorId": queryObj.authorId,
+    });
+
+    res.status(200).json({ recipes: recipes, count: count });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+exports.getRecipe = async (req, res) => {
+  try {
+    const recipes = await MyRecipe.findOne({ _id: req.params.id });
 
     res.status(200).json(recipes);
   } catch (err) {
@@ -32,7 +49,7 @@ exports.getRecipes = async (req, res) => {
 
 exports.patchRecipe = async (req, res, next) => {
   try {
-    let query = await NewRecipe.updateOne(
+    let query = await MyRecipe.updateOne(
       { _id: req.params.id },
       {
         published: req.body.published,
@@ -55,7 +72,7 @@ exports.patchRecipe = async (req, res, next) => {
 
 exports.deleteRecipe = async (req, res, next) => {
   try {
-    let query = await NewRecipe.deleteOne({ _id: req.params.id });
+    await MyRecipe.deleteOne({ _id: req.params.id });
 
     res.status(200).json({ message: "Recipe deleted successfully!" });
   } catch (err) {
@@ -105,15 +122,10 @@ exports.putRecipe = async (req, res, next) => {
       prepTime: req.body.prepTime,
       cookTime: req.body.cookTime,
       serves: req.body.serves,
-      nutritions: {
-        calories: nutritions.calories,
-        fat: nutritions.fat,
-        carbohydrate: nutritions.carbohydrate,
-        protein: nutritions.protein,
-      },
+      nutritions: nutritions,
     };
 
-    const query = await NewRecipe.findOneAndUpdate({ _id: req.params.id }, obj);
+    const query = await MyRecipe.findOneAndUpdate({ _id: req.params.id }, obj);
 
     const queryPhotos = await Photos.findOne({ _id: photosAlbumId });
 
@@ -144,7 +156,7 @@ exports.postRecipe = async (req, res, next) => {
 
     await photos.save();
 
-    let query = await NewRecipe.create({
+    let query = await MyRecipe.create({
       name: req.body.name,
       dish: req.body.dish,
       difficult: req.body.difficult,
