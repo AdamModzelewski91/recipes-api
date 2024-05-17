@@ -19,6 +19,8 @@ const postNewRecipe = mongoose.Schema(
     prepTime: { type: Number, required: true },
     cookTime: { type: Number, required: true },
     serves: { type: Number, required: true },
+    ingredients: { type: Array, required: true },
+    instructions: { type: String, required: true },
     nutritions: {
       calories: { type: Number, required: true },
       fat: { type: Number, required: true },

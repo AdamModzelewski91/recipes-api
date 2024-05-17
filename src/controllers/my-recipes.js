@@ -86,10 +86,11 @@ exports.deleteRecipe = async (req, res, next) => {
 exports.putRecipe = async (req, res, next) => {
   try {
     const nutritions = JSON.parse(req.body.nutritions);
+
     const { removedPhotos, photosAlbumId } = req.body;
 
     if (removedPhotos) {
-      const arrPhotos = removedPhotos.split(",");
+      const arrPhotos = removedPhotos.split("\\|");
       const objPhoto = arrPhotos.map((x) => ({
         _id: x,
       }));
@@ -122,6 +123,8 @@ exports.putRecipe = async (req, res, next) => {
       prepTime: req.body.prepTime,
       cookTime: req.body.cookTime,
       serves: req.body.serves,
+      instructions: req.body.instructions,
+      ingredients: req.body.ingredients.split("\\|"),
       nutritions: nutritions,
     };
 
@@ -148,8 +151,6 @@ exports.putRecipe = async (req, res, next) => {
 
 exports.postRecipe = async (req, res, next) => {
   try {
-    const nutritions = JSON.parse(req.body.nutritions);
-
     const files = new PrepPhotoFiles(req.files).toArray();
 
     const photos = await Photos.create({ photos: files });
@@ -163,6 +164,8 @@ exports.postRecipe = async (req, res, next) => {
       prepTime: req.body.prepTime,
       cookTime: req.body.cookTime,
       serves: req.body.serves,
+      instructions: req.body.instructions,
+      ingredients: req.body.ingredients.split(","),
       createdBy: {
         author: req.userData.nick,
         authorId: req.userData.userId,
