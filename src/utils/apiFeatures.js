@@ -25,6 +25,19 @@ class APIFeatures {
     return this;
   }
 
+  search() {
+    if (!this.queryObj.query) return this;
+
+    this.query = this.query.find({
+      $or: [
+        { name: { $regex: this.queryObj.query, $options: "i" } },
+        { "createdBy.author": { $regex: this.queryObj.query, $options: "i" } },
+      ],
+    });
+
+    return this;
+  }
+
   pagination() {
     const skip = this.page ?? this.#defaultPage;
     const pageLimit = this.limit ?? this.#defaultLimit;

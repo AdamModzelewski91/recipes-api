@@ -15,13 +15,26 @@ exports.getRecipes = async (req, res, next) => {
       queryObj
     )
       .globalList()
+      .search()
       .pagination()
       .limitFields();
 
     const query = await features.query;
-    const count = await MyRecipes.countDocuments({
-      published: true,
-    });
+    const count = !req.query.query
+      ? await MyRecipes.countDocuments({
+          published: true,
+        })
+      : await MyRecipes.countDocuments({
+          $or: [
+            { name: { $regex: req.query.query, $options: "i" } },
+            {
+              "createdBy.author": {
+                $regex: req.query.query,
+                $options: "i",
+              },
+            },
+          ],
+        });
 
     res.status(200).json({ recipes: query, count: count });
   } catch (err) {
