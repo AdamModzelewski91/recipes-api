@@ -7,6 +7,11 @@ module.exports = (req, res, next) => {
     req.userData = decodedJWT;
     next();
   } catch (error) {
-    res.status(401).send({ message: "Auth failed!" });
+    res
+      .status(401)
+      .send({
+        errorCode: "INVALID_TOKEN",
+        message: "Invalid or missing token",
+      });
   }
 };

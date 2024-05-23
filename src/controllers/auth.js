@@ -9,18 +9,14 @@ exports.loginUser = (req, res, next) => {
   Auth.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({
-          message: "Auth failed!",
-        });
+        throw { status: 404, message: "Check your email!" };
       }
       userAuth = user;
       return bcrypt.compare(req.body.password, user.password);
     })
     .then((result) => {
       if (!result) {
-        return res.status(401).json({
-          message: "Auth failed!",
-        });
+        throw { status: 401, message: "Wrong password!" };
       }
       const token = jwt.sign(
         { email: userAuth.email, nick: userAuth.nick, userId: userAuth._id },
@@ -35,7 +31,9 @@ exports.loginUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.status(401).json({ status: "fail", message: err.message });
+      const status = err.status || 500;
+      const message = err.message || "Internal server error";
+      res.status(status).json({ status: "fail", message });
     });
 };
 
