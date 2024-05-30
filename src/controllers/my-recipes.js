@@ -167,7 +167,7 @@ exports.postRecipe = async (req, res, next) => {
       cookTime: req.body.cookTime,
       serves: req.body.serves,
       instructions: req.body.instructions,
-      ingredients: req.body.ingredients.split(","),
+      ingredients: req.body.ingredients.split("\\|"),
       createdBy: {
         author: req.userData.nick,
         authorId: req.userData.userId,
