@@ -58,3 +58,33 @@ exports.signupUser = (req, res, next) => {
       });
   });
 };
+
+exports.checkEmail = (req, res, next) => {
+  const { email } = req.query;
+
+  Auth.findOne({ email: email })
+    .then((result) => {
+      if (result) {
+        return res.status(200).json(true);
+      }
+      res.status(200).json(false);
+    })
+    .catch((err) => {
+      res.status(200).json(false);
+    });
+};
+
+exports.checkNick = (req, res, next) => {
+  const { nick } = req.query;
+
+  Auth.findOne({ nick: nick })
+    .then((result) => {
+      if (result) {
+        return res.status(200).json(true);
+      }
+      res.status(200).json(false);
+    })
+    .catch((err) => {
+      res.status(200).json(false);
+    });
+};

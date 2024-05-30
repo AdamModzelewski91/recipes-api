@@ -151,6 +151,8 @@ exports.putRecipe = async (req, res, next) => {
 
 exports.postRecipe = async (req, res, next) => {
   try {
+    const nutritions = JSON.parse(req.body.nutritions);
+
     const files = new PrepPhotoFiles(req.files).toArray();
 
     const photos = await Photos.create({ photos: files });
