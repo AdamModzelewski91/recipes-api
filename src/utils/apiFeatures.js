@@ -39,7 +39,7 @@ class APIFeatures {
   }
 
   pagination() {
-    const skip = this.page ?? this.#defaultPage;
+    const skip = this.page * this.limit ?? this.#defaultPage;
     const pageLimit = this.limit ?? this.#defaultLimit;
 
     this.query = this.query.skip(skip).limit(pageLimit);
